@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documento asignatura="DAWEB" convocatoria="febrero" curso="1"
+	xmlns="http://www.example.org/esquema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/esquema esquema.xsd ">
+	
+	
+	<calificacion nif="1111111A" nombre="Jose" nota="5"/>
+	<calificacion nif="222222A" nota="0"/>
+	<calificacion nif="222222A" nota="10"/>
+	<calificacion nif="222222A" nota="9.5"/>
+	
+	<diligencia 
+		nif="111111A"
+		nombre="Jose"
+		nota="10"
+		fecha="2020-01-18"
+		extraordinaria="no"/>
+	
+	<diligencia 
+		nif="222222A"
+		nota="10"
+		fecha="2020-01-19"/>
+		
+	<diligencia 
+		nif="111111A"
+		nombre="Jose"
+		nota="10"
+		fecha="2020-01-02"
+		extraordinaria="no"/>
+	
+	<diligencia 
+		nif="222222A"
+		nota="10"
+		fecha="2020-01-22"/>
+</documento>
