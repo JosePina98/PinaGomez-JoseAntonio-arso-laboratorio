@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.example.org/esquema"
+	xmlns:tns="http://www.example.org/esquema"
+	elementFormDefault="qualified">
+	
+	<simpleType name="tipo_nota">
+		<restriction base="integer">
+			<minInclusive value="0"/>
+			<maxInclusive value="10"/>
+		</restriction>		
+	</simpleType>
+	
+	<simpleType name="tipo_extraordinaria">
+		<restriction base="string">
+			<enumeration value="si"/>
+			<enumeration value="no"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="tipo_convocatoria">
+		<restriction base="string">
+			<enumeration value="febrero"/>
+			<enumeration value="junio"/>
+			<enumeration value="julio"/>
+		</restriction>
+	</simpleType>
+	
+	<simpleType name="tipo_curso">
+		<restriction base="string">
+			<pattern value="[1-9]"/>
+		</restriction>
+	</simpleType>
+	
+	<complexType name="tipo_calificacion">
+		<attribute name="nif" type="string" use="required"/>
+		<attribute name="nombre" type="string"/>
+		<attribute name="nota" type="tns:tipo_nota" use="required"/>
+	</complexType>
+	
+	<complexType name="tipo_diligencia">
+		<attribute name="nif" type="string" use="required"/>
+		<attribute name="nombre" type="string"/>
+		<attribute name="nota" type="tns:tipo_nota" use="required"/>
+		<attribute name="fecha" type="date" use="required"/>
+		<attribute name="extraordinaria" type="tns:tipo_extraordinaria" default="no"/>
+	</complexType>
+					
+	<element name="documento">
+		<complexType>
+			<sequence>
+				<element name="calificacion" type="tns:tipo_calificacion" minOccurs="1" maxOccurs="unbounded"/>
+				<element name="diligencia" type="tns:tipo_diligencia" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="asignatura" type="string" use="required"/>
+			<attribute name="convocatoria" type="tns:tipo_convocatoria" use="required"/>
+			<attribute name="curso" type="tns:tipo_curso"/>
+		</complexType>
+	</element>
+</schema>

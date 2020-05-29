@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<poema fecha="" xmlns="http://www.example.org/poema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/poema poema.xsd ">
+	
+	<!-- Si en el atributo xmlns de arriba no se pone tns, se establece que cualquier etiqueta que no tenga atributo se buscará ahi (algo asi)
+		Esto se llama calificación por omisión
+		-->
+ 	<titulo>titulo</titulo> 
+	<verso>verso</verso>
+</poema>
