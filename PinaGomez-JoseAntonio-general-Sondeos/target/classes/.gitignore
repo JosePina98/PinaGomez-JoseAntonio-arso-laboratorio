@@ -1,4 +1,5 @@
+/repositories/
 /controller/
-/exceptions/
-/schema/
+/dao/
 /serviceREST/
+/schema/

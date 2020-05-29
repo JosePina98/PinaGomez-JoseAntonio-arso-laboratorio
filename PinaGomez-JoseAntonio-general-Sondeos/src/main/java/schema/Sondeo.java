@@ -1,55 +1,53 @@
 package schema;
 
 import java.util.Date;
-import java.util.List;
 
 public class Sondeo {
 	
-	protected String pregunta;
+	protected String id;
+	protected String docenteId;
 	protected String instruccionesAdicionales;
 	protected Date fechaApertura;
 	protected Date fechaCierre;
-	protected int frecuencia; //enum
-	protected List<String> listaOpciones;
-	protected int minimoRespuestas;
-	protected int maximoRespuestas;
-	protected int visibilidadResultados; //enum
-	protected List<String> listaRespuestas;
-	protected String docenteId;
-
-	public Sondeo(String pregunta, String instruccionesAdicionales, Date fechaApertura, Date fechaCierre,
-			int frecuencia, List<String> listaOpciones, int minimoRespuestas, int maximoRespuestas,
-			int visibilidadResultados, List<String> listaRespuestas, String docenteId) {
+	protected Pregunta pregunta;
+	
+	public Sondeo(String id, String docenteId, String instruccionesAdicionales, Date fechaApertura, Date fechaCierre,
+			Pregunta pregunta) {
 		super();
-		this.pregunta = pregunta;
+		this.id = id;
+		this.docenteId = docenteId;
 		this.instruccionesAdicionales = instruccionesAdicionales;
 		this.fechaApertura = fechaApertura;
 		this.fechaCierre = fechaCierre;
-		this.frecuencia = frecuencia;
-		this.listaOpciones = listaOpciones;
-		this.minimoRespuestas = minimoRespuestas;
-		this.maximoRespuestas = maximoRespuestas;
-		this.visibilidadResultados = visibilidadResultados;
-		this.listaRespuestas = listaRespuestas;
-		this.docenteId = docenteId;
-	}
-
-	public void addOpcion(String nuevaOpcion) {
-		listaOpciones.add(nuevaOpcion);
-	}
-	
-	public void removeOpcion(String opcion) {
-		listaOpciones.remove(opcion);
-	}
-	
-	//GETTERS Y SETTERS 
-
-	public String getPregunta() {
-		return pregunta;
-	}
-
-	public void setPregunta(String pregunta) {
 		this.pregunta = pregunta;
+	}
+	
+	//Metodos
+	
+	public void addOpcion(String opcion) {
+		this.pregunta.addOpcion(opcion);
+	}
+	
+	public void deleteOpcion(int index) {
+		this.pregunta.deleteOpcion(index);
+	}
+	
+	public void setVotos(int index, int votos) {
+		this.pregunta.setVotos(index, votos);
+	}
+	
+	public void addVoto(int index) {
+		this.pregunta.addVoto(index);
+	}
+
+	//Getters y Setters
+	
+	public String getDocenteId() {
+		return docenteId;
+	}
+
+	public void setDocenteId(String docenteId) {
+		this.docenteId = docenteId;
 	}
 
 	public String getInstruccionesAdicionales() {
@@ -76,60 +74,16 @@ public class Sondeo {
 		this.fechaCierre = fechaCierre;
 	}
 
-	public int getFrecuencia() {
-		return frecuencia;
+	public Pregunta getPregunta() {
+		return pregunta;
 	}
 
-	public void setFrecuencia(int frecuencia) {
-		this.frecuencia = frecuencia;
+	public void setPregunta(Pregunta pregunta) {
+		this.pregunta = pregunta;
 	}
 
-	public List<String> getListaOpciones() {
-		return listaOpciones;
+	public String getId() {
+		return id;
 	}
-
-	public void setListaOpciones(List<String> listaOpciones) {
-		this.listaOpciones = listaOpciones;
-	}
-
-	public int getMinimoRespuestas() {
-		return minimoRespuestas;
-	}
-
-	public void setMinimoRespuestas(int minimoRespuestas) {
-		this.minimoRespuestas = minimoRespuestas;
-	}
-
-	public int getMaximoRespuestas() {
-		return maximoRespuestas;
-	}
-
-	public void setMaximoRespuestas(int maximoRespuestas) {
-		this.maximoRespuestas = maximoRespuestas;
-	}
-
-	public int getVisibilidadResultados() {
-		return visibilidadResultados;
-	}
-
-	public void setVisibilidadResultados(int visibilidadResultados) {
-		this.visibilidadResultados = visibilidadResultados;
-	}
-
-	public List<String> getListaRespuestas() {
-		return listaRespuestas;
-	}
-
-	public void setListaRespuestas(List<String> listaRespuestas) {
-		this.listaRespuestas = listaRespuestas;
-	}
-
-	public String getDocenteId() {
-		return docenteId;
-	}
-
-	public void setDocenteId(String docenteId) {
-		this.docenteId = docenteId;
-	}	
 	
 }

@@ -4,38 +4,30 @@ import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.DELETE;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import controller.Controller;
-import exceptions.ArgumentException;
-import exceptions.InternalException;
-import exceptions.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import schema.Pregunta;
+import schema.Sondeo;
 
-@Path("/sondeos")
+@Path("/sondeo")
 @Api
 public class ControllerREST {
 
@@ -43,246 +35,99 @@ public class ControllerREST {
 
 	@Context
 	private UriInfo uriInfo;
-
-	/*
-	 
-	@GET
-	@Path("/authors")
-	@Produces({ MediaType.APPLICATION_ATOM_XML, "application/hal+json" })
-	@ApiOperation(value = "Consulta de los autores que tengan el nombre name", notes = "Devuelve una colección en formato Atom", response = Feed.class)
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
-	public Response searchAuthors(@Context HttpHeaders httpHeaders,
-			@ApiParam(value = "parámetro de búsqueda", required = true) @QueryParam("name") String name)
-			throws InternalException, ArgumentException {
-
-		UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-		URI url = builder.build();
-		
-		List<ResponseAuthors> authorsList = controlador.searchAuthors(name);
-
-		String accept = httpHeaders.getRequestHeader("Accept").get(0);
-
-		// Dependiendo del tipo solicitado creamos la respuesta correspondiente
-		if (accept.contains("json")) {
-			// Creamos las respuesta JSON (HAL)
-			JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
-					.add("_links", 
-							Json.createObjectBuilder()
-							.add("self", 
-									Json.createObjectBuilder()
-									.add("href", url.toString())
-									.build()
-							).build()
-					)
-					.add("total", authorsList.size());
-		
-			
-			JsonArrayBuilder authorsArray = Json.createArrayBuilder();
-			
-			for (ResponseAuthors a : authorsList) {
-				authorsArray.add(Json.createObjectBuilder()
-									.add("_links", 
-										Json.createObjectBuilder()
-										.add("self", 
-												Json.createObjectBuilder()
-												.add("href", a.getUrl().getSrc())
-												.build()
-										).build()
-									)
-									.add("authorName", a.getName())
-									.add("url", a.getUrl().getSrc())
-									.build());
-			}
-			
-			JsonObject _embedded = Json.createObjectBuilder().add("authors", authorsArray.build()).build();
-			
-			JsonObject json = jsonBuilder.add("_embedded", _embedded).build();
-
-			return Response.status(Response.Status.OK).entity(json.toString()).build();
-		} else {
-			
-			// Creamos la respuesta XML (ATOM)
-			Feed atomList = new Feed();
-			atomList.setTitle("Lista de autores");
-
-			TypeLinkCollection link = new TypeLinkCollection();
-			link.setHref(url.toString());
-			atomList.setLink(link);
-
-			XMLGregorianCalendar valueDateTime = DateUtils.createFechaTime(new Date());
-			atomList.setUpdated(valueDateTime);
-
-			TypeAuthor author = new TypeAuthor();
-			author.setName("Briam y Jose");
-			atomList.setAuthor(author);
-
-			atomList.setId(url.toString());
-
-			for (ResponseAuthors aux : authorsList) {
-				TypeEntry entry = new TypeEntry();
-
-				entry.setTitle(aux.getName());
-
-				TypeLinkCollection linkAuthor = new TypeLinkCollection();
-				linkAuthor.setHref(aux.getUrl().getSrc());
-				entry.setLink(linkAuthor);
-
-				entry.setId(linkAuthor.getHref());
-
-				entry.setUpdated(valueDateTime);
-
-				entry.setSummary("Un resultado de la búsqueda");
-
-				atomList.getEntry().add(entry);
-			}
-
-			return Response.status(Response.Status.OK).entity(atomList).build();
-		}
-	}
-
-	@GET
-	@Path("/authors/{url}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Consulta del autor especificado en el id", notes = "Devuelve los datos de un Autor en formato Atom", response = Author.class)
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
-	public Response getInfoAuthor(@PathParam("url") String URL) throws InternalException, ArgumentException {
-
-		Author author = controlador.getInfoAuthor(URL);
-
-		return Response.status(Response.Status.OK).entity(author).build();
-	}
-
+	
 	@POST
-	@Path("/favDocuments")
-	@ApiOperation(value = "Creacion de un nuevo documento de autores favoritos", notes = "Devuelve la URL completa del nuevo documento de favoritos")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
-	public Response createFavoritesDocument() throws InternalException {
-
-		String id = controlador.createFavoritesDocument();
-
+	@Path("/prueba")
+	@ApiOperation(value = "Crea un nuevo sondeo", notes = "Devuelve la url del nuevo sondeo creado")
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created") })
+	public Response createSondeo(@ApiParam(value = "Id del docente que crea el sondeo", required = true) @FormParam("docenteId") String docenteId,
+			@ApiParam(value = "Instrucciones adicionales del sondeo", required = true) @FormParam("instruccionesAdicionales") String instruccionesAdicionales, 
+			@ApiParam(value = "Fecha de apertura del sondeo", required = true) @FormParam("fechaApertura") Date fechaApertura, 
+			@ApiParam(value = "Fecha de cierre del sondeo", required = true) @FormParam("fechaCierre") Date fechaCierre, 
+			@ApiParam(value = "Texto de la pregunta del sondeo", required = true) @FormParam("textoPregunta") String textoPregunta, 
+			@ApiParam(value = "Numero de respuestas minimas del sondeo", required = true) @FormParam("minimoRespuestas") int minimoRespuestas, 
+			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) {
+		
+		Pregunta pregunta = controlador.createPregunta(textoPregunta, minimoRespuestas, maximoRespuestas);
+		
+		String id = controlador.createSondeo(docenteId, instruccionesAdicionales, fechaApertura, fechaCierre, pregunta);
+		
 		UriBuilder builder = uriInfo.getAbsolutePathBuilder();
 		builder.path(id);
 		URI newURL = builder.build();
 
 		return Response.created(newURL).build();
 	}
-
+	
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Consulta del sondeo especificado en el id", notes = "Devuelve los datos del sondeo en formato JSON", response = Sondeo.class)
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
+	public Response getSondeo(@ApiParam(value = "Id del sondeo") @PathParam("id") String id) {
+		
+		Sondeo sondeo = controlador.getSondeo(id);
+		
+		return Response.status(Response.Status.OK).entity(sondeo).build();
+	}
+	
 	@POST
-	@Path("/favDocuments/{id}/author")
-	@ApiOperation(value = "Añade el nuevo autor identificado por el parametro URL al documento de favoritos identificado por el parametro ID", notes = "")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
-			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
-			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
-	public Response addFavoriteAuthor(@FormParam("URL") String URL, @PathParam("id") String idDocument)
-			throws InternalException, ArgumentException, NotFoundException {
-
-		controlador.addFavoriteAuthor(URL, idDocument);
-
+	@Path("/{id}/addOpcion")
+	@ApiOperation(value = "Anade una opcion a un sondeo", notes = "Devuelve la url del sondeo modificado")
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content") })
+	public Response addOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
+			@ApiParam(value = "Opcion a anadir al sondeo", required = true) @FormParam("opcion") String opcion) {
+		
+		controlador.addOpcionSondeo(id, opcion);
+		
 		UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-		String aux[] = URL.split("/");
+		String aux[] = builder.toString().split("/");
 		builder.path(aux[aux.length - 1]);
 		URI newURL = builder.build();
 
 		return Response.created(newURL).build();
 	}
-
-	@DELETE
-	@Path("/favDocuments/{id}/author")
-	@ApiOperation(value = "Elimina el autor identificado por el parametro URL del documento de favoritos identificado por el parametro ID", notes = "")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
-			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
-			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
-	public Response removeFavoriteAuthor(@FormParam("URL") String URL, @PathParam("id") String idDocument)
-			throws InternalException, ArgumentException, NotFoundException {
-
-		controlador.removeFavoriteAuthor(URL, idDocument);
-
-		return Response.status(Response.Status.NO_CONTENT).build();
-	}
-
-	@GET
-	@Path("/favDocuments/{id}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Consulta del documento de favoritos especificado en el id", notes = "Devuelve los datos de un documento de favoritos en formato Atom", response = FavoritesDocument.class)
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
-			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internar Server Error"),
-			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
-	public Response getFavoritesDocument(@PathParam("id") String idDocument)
-			throws InternalException, ArgumentException, NotFoundException {
-
-		FavoritesDocument favDoc = controlador.getFavoritesDocument(idDocument);
-
-		return Response.status(Response.Status.OK).entity(favDoc).build();
-	}
-
-	@GET
-	@Path("/favDocuments")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Consulta de los ids de todos los documentos de favoritos", notes = "Devuelve los ids de todos los documentos de favoritos en formato Atom")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
-	public Response getAllFavoritesDocument() {
-
-		List<String> favDocs = controlador.getAllFavoritesDocuments();
-
-		Feed atomList = new Feed();
-		atomList.setTitle("Lista de id de documentos de autores favoritos");
-
+	
+	@POST
+	@Path("/{id}/deleteOpcion")
+	@ApiOperation(value = "Borra una opcion de un sondeo", notes = "Devuelve la url del sondeo modificado")
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content") })
+	public Response deleteOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
+			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) {
+		
+		controlador.deleteOpcionSondeo(id, index);
+		
 		UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-		URI url = builder.build();
+		String aux[] = builder.toString().split("/");
+		builder.path(aux[aux.length - 1]);
+		URI newURL = builder.build();
 
-		TypeLinkCollection link = new TypeLinkCollection();
-		link.setHref(url.toString());
-		atomList.setLink(link);
-
-		XMLGregorianCalendar valueDateTime = DateUtils.createFechaTime(new Date());
-		atomList.setUpdated(valueDateTime);
-
-		TypeAuthor author = new TypeAuthor();
-		author.setName("Briam y Jose");
-		atomList.setAuthor(author);
-
-		atomList.setId(url.toString());
-
-		for (String aux : favDocs) {
-			TypeEntry entry = new TypeEntry();
-
-			entry.setTitle(aux);
-
-			TypeLinkCollection linkAuthor = new TypeLinkCollection();
-			linkAuthor.setHref(url + "/" + aux);
-			entry.setLink(linkAuthor);
-
-			entry.setId(linkAuthor.getHref());
-
-			entry.setUpdated(valueDateTime);
-
-			entry.setSummary("Un resultado de la búsqueda");
-
-			atomList.getEntry().add(entry);
-		}
-
-		return Response.status(Response.Status.OK).entity(atomList).build();
-	}
-
-	@DELETE
-	@Path("/favDocuments/{id}")
-	@ApiOperation(value = "Elimina el documento de favoritos identificado con el parametro id", notes = "")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
-			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error") })
-	public Response removeFavoritesDocument(@PathParam("id") String idDocument)
-			throws ArgumentException, InternalException {
-
-		controlador.removeFavoritesDocument(idDocument);
-
-		return Response.status(Response.Status.NO_CONTENT).build();
+		return Response.created(newURL).build();
 	}
 	
+	@GET
+	@Path("/{id}/verResultados")
+	@ApiOperation(value = "Consulta los resultados de un sondeo", notes = "Devuelve los datos de los votos del sondeo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
+	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) {
+		
+		List<Integer> resultados = controlador.verResultados(id);
+		
+		return Response.status(Response.Status.OK).entity(resultados).build();
+
+	}
+	
+	/*
+	@POST
+	@Path("/{id}/responderSondeo")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@ApiOperation(value = "Responde a un sondeo", notes = "Devuelve la url del sondeo")
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
+	public Response responderSondeo(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
+			@ApiParam(value = "Respuestas del sondeo", required = true) @FormParam("respuestas") MultivaluedMap respuestas) {
+		
+		return null;
+	}
 	*/
 }
