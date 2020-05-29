@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.example.org/esquema"
+	xmlns:tns="http://www.example.org/esquema"
+	elementFormDefault="qualified">
+	
+	<simpleType name="tipo_email">
+		<restriction base="string">
+			<pattern value="[^@]+@[^\.]+\..+"/>
+		</restriction>
+	</simpleType>
+	
+	<complexType name="tipo_reserva">
+		<attribute name="id" type="string" use="required"/>
+		<attribute name="nombreAlumno" type="string" use="required"/>
+		<attribute name="email" type="tns:tipo_email"/>
+	</complexType>
+	
+	<complexType name="tipo_turno">
+		<sequence>
+			<element name="reserva" type="tns:tipo_reserva" minOccurs="0" maxOccurs="1"/>
+		</sequence>
+		<attribute name="turno" type="positiveInteger" use="required"/>
+		<attribute name="horario" type="time"/>
+	</complexType>
+	
+	<complexType name="tipo_agenda">
+		<sequence>
+			<element name="turno" type="tns:tipo_turno" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="dia" type="date"/>
+	</complexType>
+	
+	<element name="actividad">
+		<complexType>
+			<sequence>
+				<element name="agenda" type="tns:tipo_agenda" minOccurs="1" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="id" type="string" use="required"/>
+			<attribute name="titulo" type="string" use="required"/>
+			<attribute name="descripcion" type="string"/>
+			<attribute name="nombreProfesor" type="string" use="required"/>
+			<attribute name="email" type="tns:tipo_email"/>
+		</complexType>
+	</element>
+</schema>

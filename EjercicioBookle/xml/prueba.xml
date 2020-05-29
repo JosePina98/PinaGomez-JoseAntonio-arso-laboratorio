@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actividad 
+	id="1"
+	titulo="Actividad1"
+	descripcion="Descripcion1"
+	nombreProfesor="Profesor1"
+	email="jose@um.es" 
+	xmlns="http://www.example.org/esquema"	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/esquema esquema.xsd ">
+	
+	<agenda agenda="2001-01-01">
+		<turno horario="1">
+			<reserva id="1" nombreAlumno="Jose"/>
+		</turno>
+	</agenda>
+	
+	<agenda agenda="2001-01-02">
+		<turno horario="1">
+			<reserva id="1" nombreAlumno="Jose"/>
+		</turno>
+		<turno horario="2">
+		
+		</turno>
+	</agenda>
+	
+</actividad>
