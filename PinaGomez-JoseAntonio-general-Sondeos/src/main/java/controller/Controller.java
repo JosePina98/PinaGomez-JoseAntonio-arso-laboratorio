@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -53,11 +54,31 @@ public class Controller {
 		
 	}
 
-	public List<Integer> verResultados(String id) {
+	public HashMap<String, Integer> verResultados(String id) {
 		
 		Sondeo sondeo = this.getSondeo(id);
 		
-		return sondeo.getPregunta().getResultados();
+		HashMap<String, Integer> mapa = new HashMap<String, Integer>();
+		
+		List<String> opciones = sondeo.getPregunta().getOpciones();
+		List<Integer> resultados = sondeo.getPregunta().getResultados();
+		
+		for (int i = 0; i < opciones.size(); i++) {
+			mapa.put(opciones.get(i), resultados.get(i));
+		}
+		
+		return mapa;
+	}
+
+	public void votar(String id, List<Integer> respuestas) {
+
+		Sondeo sondeo = this.getSondeo(id);
+		
+		for (int indice : respuestas) {
+			sondeo.addVoto(indice);
+		}
+		
+		this.controladorDAO.updateVotos(sondeo);
 	}
 
 }

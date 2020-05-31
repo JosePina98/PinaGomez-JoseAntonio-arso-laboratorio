@@ -1,7 +1,12 @@
 package serviceREST;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,9 +17,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -48,6 +53,14 @@ public class ControllerREST {
 			@ApiParam(value = "Numero de respuestas minimas del sondeo", required = true) @FormParam("minimoRespuestas") int minimoRespuestas, 
 			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) {
 		
+		//Controlar que todos los parametros tengan datos validos
+		//Controlar que el id del docente exista
+		//Controlar que que la fecha de apertura sea despues de la actual
+		//Controlar que la fecha de cierre sea despues de la de apertura
+		//Ver por que la hora de la fecha se escribe como 1 hora menos en bbdd
+		//Controlar que el numero minimo de respuestas sea mayor que 0
+		//Controlar que el numero maximo de respuestas sea igual o mayor que el minimo
+		
 		Pregunta pregunta = controlador.createPregunta(textoPregunta, minimoRespuestas, maximoRespuestas);
 		
 		String id = controlador.createSondeo(docenteId, instruccionesAdicionales, fechaApertura, fechaCierre, pregunta);
@@ -66,6 +79,8 @@ public class ControllerREST {
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
 	public Response getSondeo(@ApiParam(value = "Id del sondeo") @PathParam("id") String id) {
 		
+		//Comprobar que el id del sondeo tiene datos validos y existe
+		
 		Sondeo sondeo = controlador.getSondeo(id);
 		
 		return Response.status(Response.Status.OK).entity(sondeo).build();
@@ -78,14 +93,17 @@ public class ControllerREST {
 	public Response addOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Opcion a anadir al sondeo", required = true) @FormParam("opcion") String opcion) {
 		
+		//Comprobar que el id del sondeo tiene datos validos y existe
+		//Comprobar que la opcion a añadir tiene datos validos y no esta ya añadida
+		//Comprobar que el que esta haciendo esta peticion es el docente que creó el sondeo
+		
 		controlador.addOpcionSondeo(id, opcion);
 		
-		UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-		String aux[] = builder.toString().split("/");
-		builder.path(aux[aux.length - 1]);
-		URI newURL = builder.build();
-
-		return Response.created(newURL).build();
+		String oldURL = uriInfo.getAbsolutePath().toString();
+		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
+		URI uri = URI.create(newURL);
+		
+		return Response.created(uri).build();
 	}
 	
 	@POST
@@ -95,14 +113,17 @@ public class ControllerREST {
 	public Response deleteOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) {
 		
+		//Comprobar que el id del sondeo tiene datos validos y existe
+		//Comprobar que el indice a borrar esta en el sondeo
+		//Comprobar que el que esta haciendo esta peticion es el docente que creó el sondeo
+		
 		controlador.deleteOpcionSondeo(id, index);
 		
-		UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-		String aux[] = builder.toString().split("/");
-		builder.path(aux[aux.length - 1]);
-		URI newURL = builder.build();
-
-		return Response.created(newURL).build();
+		String oldURL = uriInfo.getAbsolutePath().toString();
+		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
+		URI uri = URI.create(newURL);
+		
+		return Response.created(uri).build();
 	}
 	
 	@GET
@@ -112,22 +133,43 @@ public class ControllerREST {
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
 	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) {
 		
-		List<Integer> resultados = controlador.verResultados(id);
+		//Comprobar que el id del sondeo tiene datos validos y existe
 		
-		return Response.status(Response.Status.OK).entity(resultados).build();
-
+		HashMap<String, Integer> mapa = controlador.verResultados(id);
+		
+		return Response.status(Response.Status.OK).entity(mapa).build();
 	}
 	
-	/*
+	
 	@POST
 	@Path("/{id}/responderSondeo")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = "Responde a un sondeo", notes = "Devuelve la url del sondeo")
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
 	public Response responderSondeo(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
-			@ApiParam(value = "Respuestas del sondeo", required = true) @FormParam("respuestas") MultivaluedMap respuestas) {
+			@ApiParam(value = "Respuestas del sondeo", required = true) @QueryParam("respuestas") List<String> respuestas) {
 		
-		return null;
+		//Comprobar que el id del sondeo tiene datos validos y existe
+		//Comprobar que cumple las respuestas minimas y maximas
+		//Comprobar que no se responde dos o mas veces la misma opcion
+		//Comprobar que el que esta respondiendo es un alumno
+		//Comprobar que todas las opciones respondidas estan en el sondeo
+		
+		List<Integer> lista = new LinkedList<Integer>();
+
+		String string = respuestas.get(0);
+		String[] array = string.split(",");
+		for (String i : array) {
+			int aux = Integer.valueOf(i);
+			lista.add(aux);
+		}
+		
+		controlador.votar(id, lista);		
+	    
+		String oldURL = uriInfo.getAbsolutePath().toString();
+		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
+		URI uri = URI.create(newURL);
+		
+		return Response.created(uri).build();
 	}
-	*/
+	
 }

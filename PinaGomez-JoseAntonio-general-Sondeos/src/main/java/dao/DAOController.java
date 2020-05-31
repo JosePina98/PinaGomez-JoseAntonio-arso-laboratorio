@@ -54,4 +54,8 @@ public class DAOController {
 		sondeoRepository.updateResultados(sondeo);
 	}
 
+	public void updateVotos(Sondeo sondeo) {
+		sondeoRepository.updateResultados(sondeo);
+	}
+
 }
