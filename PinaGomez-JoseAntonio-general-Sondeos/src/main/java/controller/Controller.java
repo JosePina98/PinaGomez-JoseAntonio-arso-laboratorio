@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.bson.types.ObjectId;
 
+import com.rabbitmq.client.Sender;
+
 import dao.DAOController;
 import exceptions.ArgumentException;
 import exceptions.InternalException;
@@ -83,13 +85,11 @@ public class Controller {
 			throw new ArgumentException("{ \"error\" : \"El parametro fechaCierre no puede ser anterior al parametro fechaApertura\" }");
 		}
 		
-		//TODO Ver por que la hora de la fecha se escribe como 1 hora menos en bbdd
-		System.out.println("Fecha apertura: " + fechaApertura.toString());
-		System.out.println("Fecha cierre: " + fechaCierre.toString());
-
 		Sondeo sondeo = null;
 		try {
 			sondeo = this.controladorDAO.createSondeo(docenteId, instruccionesAdicionales, fechaApertura, fechaCierre, pregunta);
+		
+			Sender.notificarEventoNuevoSondeo(sondeo);
 		} catch (Exception e) {
 			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
 		}

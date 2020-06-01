@@ -27,23 +27,23 @@ public class UsuariosRepository {
 			throw new RuntimeException("HttpResponseCode: " + responsecode);
 		} else {
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		     String inputLine;
-		     StringBuffer response = new StringBuffer();
-		     while ((inputLine = in.readLine()) != null) {
-		     	response.append(inputLine);
-		     }
-		     in.close();
-		     
-		     JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
-		     JsonObject object = jsonReader.readObject();
-		     jsonReader.close();
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
 
-		     String rol = object.getString("rol");
-		     if (rol.equalsIgnoreCase("ESTUDIANTE")) {
-		    	 return true;
-		     } else {
-		    	 return false;
-		     }
+			JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
+			JsonObject object = jsonReader.readObject();
+			jsonReader.close();
+
+			String rol = object.getString("rol");
+			if (rol.equalsIgnoreCase("ESTUDIANTE")) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 	
@@ -60,23 +60,23 @@ public class UsuariosRepository {
 			return false;
 		} else {
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		     String inputLine;
-		     StringBuffer response = new StringBuffer();
-		     while ((inputLine = in.readLine()) != null) {
-		     	response.append(inputLine);
-		     }
-		     in.close();
-		     
-		     JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
-		     JsonObject object = jsonReader.readObject();
-		     jsonReader.close();
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
 
-		     String rol = object.getString("rol");
-		     if (rol.equalsIgnoreCase("PROFESOR")) {
-		    	 return true;
-		     } else {
-		    	 return false;
-		     }
+			JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
+			JsonObject object = jsonReader.readObject();
+			jsonReader.close();
+
+			String rol = object.getString("rol");
+			if (rol.equalsIgnoreCase("PROFESOR")) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 }
