@@ -21,6 +21,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import controller.Controller;
 import exceptions.ArgumentException;
+import exceptions.InternalException;
 import exceptions.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +31,7 @@ import io.swagger.annotations.ApiResponses;
 import schema.Pregunta;
 import schema.Sondeo;
 
-@Path("/sondeo")
+@Path("/sondeos")
 @Api
 public class ControllerREST {
 
@@ -40,9 +41,10 @@ public class ControllerREST {
 	private UriInfo uriInfo;
 	
 	@POST
-	@Path("/prueba")
+	@Path("/sondeo")
 	@ApiOperation(value = "Crea un nuevo sondeo", notes = "Devuelve la url del nuevo sondeo creado")
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
 	public Response createSondeo(@ApiParam(value = "Id del docente que crea el sondeo", required = true) @FormParam("docenteId") String docenteId,
 			@ApiParam(value = "Instrucciones adicionales del sondeo", required = true) @FormParam("instruccionesAdicionales") String instruccionesAdicionales, 
@@ -50,7 +52,7 @@ public class ControllerREST {
 			@ApiParam(value = "Fecha de cierre. Formato MM/dd/YYY hh:mm", required = true) @FormParam("fechaCierre") Date fechaCierre, 
 			@ApiParam(value = "Texto de la pregunta del sondeo", required = true) @FormParam("textoPregunta") String textoPregunta, 
 			@ApiParam(value = "Numero de respuestas minimas del sondeo", required = true) @FormParam("minimoRespuestas") int minimoRespuestas, 
-			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) throws ArgumentException {
+			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) throws ArgumentException, InternalException {
 		
 		Pregunta pregunta = controlador.createPregunta(textoPregunta, minimoRespuestas, maximoRespuestas);
 		
@@ -68,9 +70,10 @@ public class ControllerREST {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Consulta del sondeo especificado en el id", notes = "Devuelve los datos del sondeo en formato JSON", response = Sondeo.class)
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
-	public Response getSondeo(@ApiParam(value = "Id del sondeo") @PathParam("id") String id) throws ArgumentException, NotFoundException {
+	public Response getSondeo(@ApiParam(value = "Id del sondeo") @PathParam("id") String id) throws ArgumentException, NotFoundException, InternalException {
 				
 		Sondeo sondeo = controlador.getSondeo(id);
 		
@@ -81,11 +84,12 @@ public class ControllerREST {
 	@Path("/{id}/addOpcion")
 	@ApiOperation(value = "Anade una opcion a un sondeo", notes = "Devuelve la url del sondeo modificado")
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response addOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Id del docente que  que hace la peticion", required = true) @FormParam("docenteId") String docenteId,
-			@ApiParam(value = "Opcion a anadir al sondeo", required = true) @FormParam("opcion") String opcion) throws ArgumentException, NotFoundException {
+			@ApiParam(value = "Opcion a anadir al sondeo", required = true) @FormParam("opcion") String opcion) throws ArgumentException, NotFoundException, InternalException {
 		
 		controlador.addOpcionSondeo(id, docenteId, opcion);
 		
@@ -100,11 +104,12 @@ public class ControllerREST {
 	@Path("/{id}/deleteOpcion")
 	@ApiOperation(value = "Borra una opcion de un sondeo", notes = "Devuelve la url del sondeo modificado")
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response deleteOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Id del docente que hace la peticion", required = true) @FormParam("docenteId") String docenteId,
-			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) throws ArgumentException, NotFoundException {
+			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) throws ArgumentException, NotFoundException, InternalException {
 		
 		
 		controlador.deleteOpcionSondeo(id, docenteId, index);
@@ -121,9 +126,10 @@ public class ControllerREST {
 	@ApiOperation(value = "Consulta los resultados de un sondeo", notes = "Devuelve los datos de los votos del sondeo")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
-	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) throws ArgumentException, NotFoundException {
+	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) throws ArgumentException, NotFoundException, InternalException {
 				
 		HashMap<String, Integer> mapa = controlador.verResultados(id);
 		
@@ -135,11 +141,12 @@ public class ControllerREST {
 	@Path("/{id}/responderSondeo")
 	@ApiOperation(value = "Responde a un sondeo", notes = "Devuelve la url del sondeo")
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response responderSondeo(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Id del alumno que responde el sondeo", required = true) @FormParam("alumnoId") String alumnoId,
-			@ApiParam(value = "Respuestas del sondeo", required = true) @QueryParam("respuestas") List<String> respuestas) throws ArgumentException, NotFoundException {
+			@ApiParam(value = "Respuestas del sondeo", required = true) @QueryParam("respuestas") List<String> respuestas) throws ArgumentException, NotFoundException, InternalException {
 		
 
 		List<Integer> lista = new LinkedList<Integer>();

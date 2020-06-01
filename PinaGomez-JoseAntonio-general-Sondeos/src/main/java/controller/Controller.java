@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 
 import dao.DAOController;
 import exceptions.ArgumentException;
+import exceptions.InternalException;
 import exceptions.NotFoundException;
 import schema.Pregunta;
 import schema.Sondeo;
@@ -39,7 +40,7 @@ public class Controller {
 	}
 
 	public String createSondeo(String docenteId, String instruccionesAdicionales, Date fechaApertura, Date fechaCierre,
-			Pregunta pregunta) throws ArgumentException {
+			Pregunta pregunta) throws ArgumentException, InternalException {
 		
 		//Controlar que todos los parametros tengan datos validos
 		if (docenteId == null || docenteId.isEmpty()) {
@@ -70,16 +71,21 @@ public class Controller {
 			throw new ArgumentException("{ \"error\" : \"El parametro fechaCierre no puede ser anterior al parametro fechaApertura\" }");
 		}
 		
-		//Ver por que la hora de la fecha se escribe como 1 hora menos en bbdd
+		//TODO Ver por que la hora de la fecha se escribe como 1 hora menos en bbdd
 		System.out.println("Fecha apertura: " + fechaApertura.toString());
 		System.out.println("Fecha cierre: " + fechaCierre.toString());
-		
-		Sondeo sondeo = this.controladorDAO.createSondeo(docenteId, instruccionesAdicionales, fechaApertura, fechaCierre, pregunta);
+
+		Sondeo sondeo = null;
+		try {
+			sondeo = this.controladorDAO.createSondeo(docenteId, instruccionesAdicionales, fechaApertura, fechaCierre, pregunta);
+		} catch (Exception e) {
+			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
+		}
 		
 		return sondeo.getId();
 	}
 
-	public Sondeo getSondeo(String id) throws ArgumentException, NotFoundException {
+	public Sondeo getSondeo(String id) throws ArgumentException, NotFoundException, InternalException {
 		
 		//Comprobar que el id del sondeo tiene datos validos y existe
 		if (id == null || id.isEmpty()) {
@@ -90,7 +96,12 @@ public class Controller {
 			throw new ArgumentException("{ \"error\" : \"El parametro id debe no es una cadena hexadecimal correcta\" }");
 		}
 		
-		Sondeo sondeo = this.controladorDAO.getSondeo(id);
+		Sondeo sondeo = null;
+		try {
+			sondeo = this.controladorDAO.getSondeo(id);
+		} catch (Exception e) {
+			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
+		}	
 		
 		if (sondeo == null) {
 			throw new NotFoundException("{ \"error\" : \"El sondeo indicado no existe\" }");
@@ -99,7 +110,7 @@ public class Controller {
 		return sondeo;
 	}
 
-	public void addOpcionSondeo(String id, String idDocente, String opcion) throws ArgumentException, NotFoundException {
+	public void addOpcionSondeo(String id, String idDocente, String opcion) throws ArgumentException, NotFoundException, InternalException {
 
 		//Comprobar que el id del sondeo tiene datos validos y existe
 		if (opcion == null || opcion.isEmpty()) {
@@ -122,10 +133,14 @@ public class Controller {
 		
 		sondeo.addOpcion(opcion);
 		
-		this.controladorDAO.updateOpciones(sondeo);
+		try {
+			this.controladorDAO.updateOpciones(sondeo);
+		} catch (Exception e) {
+			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
+		}
 	}
 
-	public void deleteOpcionSondeo(String id, String idDocente, int index) throws ArgumentException, NotFoundException {
+	public void deleteOpcionSondeo(String id, String idDocente, int index) throws ArgumentException, NotFoundException, InternalException {
 		
 		Sondeo sondeo = this.getSondeo(id);
 		
@@ -136,10 +151,14 @@ public class Controller {
 				
 		sondeo.deleteOpcion(index);
 		
-		this.controladorDAO.updateOpciones(sondeo);		
+		try {
+			this.controladorDAO.updateOpciones(sondeo);
+		} catch (Exception e) {
+			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
+		}
 	}
 
-	public HashMap<String, Integer> verResultados(String id) throws ArgumentException, NotFoundException {
+	public HashMap<String, Integer> verResultados(String id) throws ArgumentException, NotFoundException, InternalException {
 		
 		Sondeo sondeo = this.getSondeo(id);
 		
@@ -155,7 +174,7 @@ public class Controller {
 		return mapa;
 	}
 
-	public void votar(String id, String alumnoId, List<Integer> respuestas) throws ArgumentException, NotFoundException {
+	public void votar(String id, String alumnoId, List<Integer> respuestas) throws ArgumentException, NotFoundException, InternalException {
 		
 
 		//Comprobar que el id del sondeo tiene datos validos y existe
@@ -183,7 +202,11 @@ public class Controller {
 		
 		//Comprobar que el que esta respondiendo es un alumno
 
-		this.controladorDAO.updateVotos(sondeo);
+		try {
+			this.controladorDAO.updateVotos(sondeo);
+		} catch (Exception e) {
+			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
+		}
 	}
 
 }
