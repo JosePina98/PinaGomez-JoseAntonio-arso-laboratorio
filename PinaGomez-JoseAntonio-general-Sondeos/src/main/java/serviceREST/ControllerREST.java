@@ -1,16 +1,12 @@
 package serviceREST;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,6 +20,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import controller.Controller;
+import exceptions.ArgumentException;
+import exceptions.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,22 +42,15 @@ public class ControllerREST {
 	@POST
 	@Path("/prueba")
 	@ApiOperation(value = "Crea un nuevo sondeo", notes = "Devuelve la url del nuevo sondeo creado")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created") })
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
 	public Response createSondeo(@ApiParam(value = "Id del docente que crea el sondeo", required = true) @FormParam("docenteId") String docenteId,
 			@ApiParam(value = "Instrucciones adicionales del sondeo", required = true) @FormParam("instruccionesAdicionales") String instruccionesAdicionales, 
-			@ApiParam(value = "Fecha de apertura del sondeo", required = true) @FormParam("fechaApertura") Date fechaApertura, 
-			@ApiParam(value = "Fecha de cierre del sondeo", required = true) @FormParam("fechaCierre") Date fechaCierre, 
+			@ApiParam(value = "Fecha de apertura. Formato MM/dd/YYY hh:mm", required = true) @FormParam("fechaApertura") Date fechaApertura, 
+			@ApiParam(value = "Fecha de cierre. Formato MM/dd/YYY hh:mm", required = true) @FormParam("fechaCierre") Date fechaCierre, 
 			@ApiParam(value = "Texto de la pregunta del sondeo", required = true) @FormParam("textoPregunta") String textoPregunta, 
 			@ApiParam(value = "Numero de respuestas minimas del sondeo", required = true) @FormParam("minimoRespuestas") int minimoRespuestas, 
-			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) {
-		
-		//Controlar que todos los parametros tengan datos validos
-		//Controlar que el id del docente exista
-		//Controlar que que la fecha de apertura sea despues de la actual
-		//Controlar que la fecha de cierre sea despues de la de apertura
-		//Ver por que la hora de la fecha se escribe como 1 hora menos en bbdd
-		//Controlar que el numero minimo de respuestas sea mayor que 0
-		//Controlar que el numero maximo de respuestas sea igual o mayor que el minimo
+			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) throws ArgumentException {
 		
 		Pregunta pregunta = controlador.createPregunta(textoPregunta, minimoRespuestas, maximoRespuestas);
 		
@@ -71,16 +62,16 @@ public class ControllerREST {
 
 		return Response.created(newURL).build();
 	}
-	
+
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Consulta del sondeo especificado en el id", notes = "Devuelve los datos del sondeo en formato JSON", response = Sondeo.class)
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
-	public Response getSondeo(@ApiParam(value = "Id del sondeo") @PathParam("id") String id) {
-		
-		//Comprobar que el id del sondeo tiene datos validos y existe
-		
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
+	public Response getSondeo(@ApiParam(value = "Id del sondeo") @PathParam("id") String id) throws ArgumentException, NotFoundException {
+				
 		Sondeo sondeo = controlador.getSondeo(id);
 		
 		return Response.status(Response.Status.OK).entity(sondeo).build();
@@ -89,15 +80,14 @@ public class ControllerREST {
 	@POST
 	@Path("/{id}/addOpcion")
 	@ApiOperation(value = "Anade una opcion a un sondeo", notes = "Devuelve la url del sondeo modificado")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content") })
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response addOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
-			@ApiParam(value = "Opcion a anadir al sondeo", required = true) @FormParam("opcion") String opcion) {
+			@ApiParam(value = "Id del docente que  que hace la peticion", required = true) @FormParam("docenteId") String docenteId,
+			@ApiParam(value = "Opcion a anadir al sondeo", required = true) @FormParam("opcion") String opcion) throws ArgumentException, NotFoundException {
 		
-		//Comprobar que el id del sondeo tiene datos validos y existe
-		//Comprobar que la opcion a añadir tiene datos validos y no esta ya añadida
-		//Comprobar que el que esta haciendo esta peticion es el docente que creó el sondeo
-		
-		controlador.addOpcionSondeo(id, opcion);
+		controlador.addOpcionSondeo(id, docenteId, opcion);
 		
 		String oldURL = uriInfo.getAbsolutePath().toString();
 		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
@@ -109,15 +99,15 @@ public class ControllerREST {
 	@POST
 	@Path("/{id}/deleteOpcion")
 	@ApiOperation(value = "Borra una opcion de un sondeo", notes = "Devuelve la url del sondeo modificado")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content") })
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response deleteOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
-			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) {
+			@ApiParam(value = "Id del docente que hace la peticion", required = true) @FormParam("docenteId") String docenteId,
+			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) throws ArgumentException, NotFoundException {
 		
-		//Comprobar que el id del sondeo tiene datos validos y existe
-		//Comprobar que el indice a borrar esta en el sondeo
-		//Comprobar que el que esta haciendo esta peticion es el docente que creó el sondeo
 		
-		controlador.deleteOpcionSondeo(id, index);
+		controlador.deleteOpcionSondeo(id, docenteId, index);
 		
 		String oldURL = uriInfo.getAbsolutePath().toString();
 		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
@@ -130,11 +120,11 @@ public class ControllerREST {
 	@Path("/{id}/verResultados")
 	@ApiOperation(value = "Consulta los resultados de un sondeo", notes = "Devuelve los datos de los votos del sondeo")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
-	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) {
-		
-		//Comprobar que el id del sondeo tiene datos validos y existe
-		
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
+	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) throws ArgumentException, NotFoundException {
+				
 		HashMap<String, Integer> mapa = controlador.verResultados(id);
 		
 		return Response.status(Response.Status.OK).entity(mapa).build();
@@ -144,16 +134,14 @@ public class ControllerREST {
 	@POST
 	@Path("/{id}/responderSondeo")
 	@ApiOperation(value = "Responde a un sondeo", notes = "Devuelve la url del sondeo")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK") })
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response responderSondeo(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
-			@ApiParam(value = "Respuestas del sondeo", required = true) @QueryParam("respuestas") List<String> respuestas) {
+			@ApiParam(value = "Id del alumno que responde el sondeo", required = true) @FormParam("alumnoId") String alumnoId,
+			@ApiParam(value = "Respuestas del sondeo", required = true) @QueryParam("respuestas") List<String> respuestas) throws ArgumentException, NotFoundException {
 		
-		//Comprobar que el id del sondeo tiene datos validos y existe
-		//Comprobar que cumple las respuestas minimas y maximas
-		//Comprobar que no se responde dos o mas veces la misma opcion
-		//Comprobar que el que esta respondiendo es un alumno
-		//Comprobar que todas las opciones respondidas estan en el sondeo
-		
+
 		List<Integer> lista = new LinkedList<Integer>();
 
 		String string = respuestas.get(0);
@@ -163,7 +151,7 @@ public class ControllerREST {
 			lista.add(aux);
 		}
 		
-		controlador.votar(id, lista);		
+		controlador.votar(id, alumnoId, lista);		
 	    
 		String oldURL = uriInfo.getAbsolutePath().toString();
 		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));

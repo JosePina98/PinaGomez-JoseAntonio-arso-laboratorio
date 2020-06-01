@@ -67,11 +67,17 @@ public class SondeoRepository {
 		return docToSondeo(doc);
 	}
 	
-	public Sondeo findById(String id) {
+	public Sondeo findById(String id) throws IllegalArgumentException {
 
 		FindIterable<Document> listaDocs = sondeos.find(Filters.eq("_id", new ObjectId(id)));
 		
-		return docToSondeo(listaDocs.first());
+		Document documento = listaDocs.first();
+		
+		if (documento != null) {
+			return docToSondeo(documento);			
+		} else {
+			return null;
+		}
 	}
 	
 	public void updateOpciones(Sondeo sondeo) {
