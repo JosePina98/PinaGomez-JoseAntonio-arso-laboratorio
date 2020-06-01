@@ -46,10 +46,10 @@ public class ControllerREST {
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created"),
 			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
-	public Response createSondeo(@ApiParam(value = "Id del docente que crea el sondeo", required = true) @FormParam("docenteId") String docenteId,
+	public Response createSondeo(@ApiParam(value = "Correo del docente que crea el sondeo", required = true) @FormParam("docenteId") String docenteId,
 			@ApiParam(value = "Instrucciones adicionales del sondeo", required = true) @FormParam("instruccionesAdicionales") String instruccionesAdicionales, 
-			@ApiParam(value = "Fecha de apertura. Formato MM/dd/YYY hh:mm", required = true) @FormParam("fechaApertura") Date fechaApertura, 
-			@ApiParam(value = "Fecha de cierre. Formato MM/dd/YYY hh:mm", required = true) @FormParam("fechaCierre") Date fechaCierre, 
+			@ApiParam(value = "Fecha de apertura. Formato MM/dd/YYYY hh:mm", required = true) @FormParam("fechaApertura") Date fechaApertura, 
+			@ApiParam(value = "Fecha de cierre. Formato MM/dd/YYYY hh:mm", required = true) @FormParam("fechaCierre") Date fechaCierre, 
 			@ApiParam(value = "Texto de la pregunta del sondeo", required = true) @FormParam("textoPregunta") String textoPregunta, 
 			@ApiParam(value = "Numero de respuestas minimas del sondeo", required = true) @FormParam("minimoRespuestas") int minimoRespuestas, 
 			@ApiParam(value = "Numero de respuestas maximas del sondeo", required = true) @FormParam("maximoRespuestas") int maximoRespuestas) throws ArgumentException, InternalException {
@@ -93,11 +93,7 @@ public class ControllerREST {
 		
 		controlador.addOpcionSondeo(id, docenteId, opcion);
 		
-		String oldURL = uriInfo.getAbsolutePath().toString();
-		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
-		URI uri = URI.create(newURL);
-		
-		return Response.created(uri).build();
+		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 	
 	@POST
@@ -114,33 +110,13 @@ public class ControllerREST {
 		
 		controlador.deleteOpcionSondeo(id, docenteId, index);
 		
-		String oldURL = uriInfo.getAbsolutePath().toString();
-		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
-		URI uri = URI.create(newURL);
-		
-		return Response.created(uri).build();
+		return Response.status(Response.Status.NO_CONTENT).build();
 	}
-	
-	@GET
-	@Path("/{id}/verResultados")
-	@ApiOperation(value = "Consulta los resultados de un sondeo", notes = "Devuelve los datos de los votos del sondeo")
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
-			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
-			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
-			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
-	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) throws ArgumentException, NotFoundException, InternalException {
-				
-		HashMap<String, Integer> mapa = controlador.verResultados(id);
-		
-		return Response.status(Response.Status.OK).entity(mapa).build();
-	}
-	
 	
 	@POST
 	@Path("/{id}/responderSondeo")
 	@ApiOperation(value = "Responde a un sondeo", notes = "Devuelve la url del sondeo")
-	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "204 No Content"),
 			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
@@ -160,11 +136,23 @@ public class ControllerREST {
 		
 		controlador.votar(id, alumnoId, lista);		
 	    
-		String oldURL = uriInfo.getAbsolutePath().toString();
-		String newURL = oldURL.substring(0, oldURL.lastIndexOf('/'));
-		URI uri = URI.create(newURL);
-		
-		return Response.created(uri).build();
+		return Response.status(Response.Status.NO_CONTENT).build();
 	}
+	
+	@GET
+	@Path("/{id}/verResultados")
+	@ApiOperation(value = "Consulta los resultados de un sondeo", notes = "Devuelve los datos de los votos del sondeo")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
+	public Response verResultados(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id) throws ArgumentException, NotFoundException, InternalException {
+				
+		HashMap<String, Integer> mapa = controlador.verResultados(id);
+		
+		return Response.status(Response.Status.OK).entity(mapa).build();
+	}
+	
 	
 }

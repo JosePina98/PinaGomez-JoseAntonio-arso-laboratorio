@@ -6,13 +6,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
-import repositories.SondeoRepository;
+import repositories.SondeosRepository;
 import schema.Pregunta;
 import schema.Sondeo;
 
 public class DAOController {
 	
-	private static SondeoRepository sondeoRepository;
+	private static SondeosRepository sondeoRepository;
 	private static MongoClient client;
 	
     private static DAOController UNICA_INSTANCIA = null;
@@ -34,7 +34,7 @@ public class DAOController {
 
 		MongoDatabase mongo = client.getDatabase("arso");
 
-		sondeoRepository = new SondeoRepository(mongo.getCollection("sondeos"));
+		sondeoRepository = new SondeosRepository(mongo.getCollection("sondeos"));
 	}
 
 	public Sondeo createSondeo(String docenteId, String instruccionesAdicionales, Date fechaApertura, Date fechaCierre,

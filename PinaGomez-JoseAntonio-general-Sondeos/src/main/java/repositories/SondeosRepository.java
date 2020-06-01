@@ -14,11 +14,11 @@ import com.mongodb.client.model.Filters;
 import schema.Pregunta;
 import schema.Sondeo;
 
-public class SondeoRepository {
+public class SondeosRepository {
 
 	private final MongoCollection<Document> sondeos;
 
-	public SondeoRepository(MongoCollection<Document> sondeos) {
+	public SondeosRepository(MongoCollection<Document> sondeos) {
 		this.sondeos = sondeos;
 	}
 	

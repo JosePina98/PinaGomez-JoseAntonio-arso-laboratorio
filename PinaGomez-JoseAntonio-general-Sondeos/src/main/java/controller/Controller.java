@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import dao.DAOController;
 import exceptions.ArgumentException;
 import exceptions.InternalException;
 import exceptions.NotFoundException;
+import repositories.UsuariosRepository;
 import schema.Pregunta;
 import schema.Sondeo;
 
@@ -60,6 +62,16 @@ public class Controller {
 		}
 		
 		//Controlar que el id del docente exista
+		boolean respuesta = false;
+		try {
+			respuesta = UsuariosRepository.existeProfesor(docenteId);
+		} catch (IOException e1) {
+			throw new InternalException("{ \"error\" : \"Error en la peticion a la API de Usuarios\" }");
+		}
+		
+		if (respuesta == false) {
+			throw new ArgumentException("{ \"error\" : \"El parametro docenteId identificador del profesor no es correcto\" }");
+		}
 		
 		//Controlar que que la fecha de apertura sea despues de la actual
 		if (fechaApertura.before(new Date())) {
@@ -201,6 +213,16 @@ public class Controller {
 		}
 		
 		//Comprobar que el que esta respondiendo es un alumno
+		boolean respuesta = false;
+		try {
+			respuesta = UsuariosRepository.existeEstudiante(alumnoId);
+		} catch (IOException e1) {
+			throw new InternalException("{ \"error\" : \"Error en la peticion a la API de Usuarios\" }");
+		}
+		
+		if (respuesta == false) {
+			throw new ArgumentException("{ \"error\" : \"El parametro alumnoId identificador del estudiante no es correcto\" }");
+		}
 
 		try {
 			this.controladorDAO.updateVotos(sondeo);
