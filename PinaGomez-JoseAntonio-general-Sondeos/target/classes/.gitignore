@@ -1,7 +1,7 @@
 /com/
 /controller/
-/repositories/
 /dao/
 /exceptions/
+/repositories/
 /schema/
 /serviceREST/

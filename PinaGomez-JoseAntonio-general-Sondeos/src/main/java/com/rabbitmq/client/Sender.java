@@ -54,7 +54,7 @@ public class Sender {
 
 	public static void notificarEventoNuevoSondeo(Sondeo sondeo) throws InternalException, IOException {
 		
-		String mensaje = "{ \"profesor\" : \"" + sondeo.getDocenteId() + "\", \"sondeo\" : \"" + sondeo.getId() +
+		String mensaje = "{ \"profesor\" : \"" + sondeo.getDocenteId() + "\", \"idTarea\" : \"" + sondeo.getId() +
 				"\", \"servicio\" : \"sondeos\" }";
 		
 		try {

@@ -1,0 +1,6 @@
+repositories\TareasRepository.class
+schema\model\Tarea.class
+controller\Program.class
+controller\GraphQLEndpoint.class
+controller\Query.class
+controller\Mutation.class

@@ -1,0 +1,21 @@
+type Tarea {
+  idCreador: String!
+  idTarea: String!
+  servicio: String!
+}
+
+type Query {
+  getAllTareasPendientes: [Tarea]
+  getTareasPendientesSondeos: [Tarea]
+  getTareasPendientesApuntate: [Tarea]
+}
+
+type Mutation {
+	removeTarea(idTarea: String!): Boolean
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+

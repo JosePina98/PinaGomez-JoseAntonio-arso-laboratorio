@@ -1,6 +1,6 @@
-/dao/
-/repositories/
-/serviceREST/
 /controller/
+/dao/
 /exceptions/
+/repositories/
 /schema/
+/serviceREST/
