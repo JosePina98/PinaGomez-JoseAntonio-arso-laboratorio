@@ -25,32 +25,23 @@ public class Query implements GraphQLRootResolver {
 			listaTareas = new LinkedList<Tarea>();
 		}
 
-		System.out.println("Antiguas: " + listaTareas.size());
-		
-		List<JsonObject> listaJson = null;
-		try {
-			listaJson = Reciever.recieveMessages();
+		boolean mensajesPendientes = true;
+		try {			
+			while (mensajesPendientes) {
+				
+				JsonObject objeto = Reciever.recieveMessage();
+				
+				if (objeto == null) {
+					mensajesPendientes = false;
+				} else {
+					Tarea tarea = tareasRepository.saveTarea(objeto.getString("profesor"), objeto.getString("idTarea"), objeto.getString("servicio"));
+					listaTareas.add(tarea);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		if (listaJson != null) {
-			System.out.println("Nuevas: " + listaJson.size());
-			for (JsonObject o : listaJson) {
-				Tarea tarea = tareasRepository.saveTarea(o.getString("profesor"), o.getString("idTarea"), o.getString("servicio"));
-				listaTareas.add(tarea);
-			}
-		}
-		
-		System.out.println("Total: " + listaTareas.size());
 		return listaTareas;
-	}
-	
-	public List<Tarea> getTareasPendientesSondeos() {
-		return tareasRepository.getAllTareasSondeos();
-	}
-	
-	public List<Tarea> getTareasPendientesApuntate() {
-		return tareasRepository.getAllTareasApuntate();
 	}
 }

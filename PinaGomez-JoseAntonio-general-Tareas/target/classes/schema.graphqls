@@ -6,8 +6,6 @@ type Tarea {
 
 type Query {
   getAllTareasPendientes: [Tarea]
-  getTareasPendientesSondeos: [Tarea]
-  getTareasPendientesApuntate: [Tarea]
 }
 
 type Mutation {
