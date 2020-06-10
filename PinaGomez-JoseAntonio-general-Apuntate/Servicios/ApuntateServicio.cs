@@ -9,7 +9,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Servicios
     {
         private readonly IMongoCollection<Reunion> _reuniones;
 
-        public ApuntateService(IReunionDatabaseSettings settings)
+        public ApuntateService()
         {
             var client = new MongoClient("mongodb+srv://arso:arso-20@cluster0-xditi.azure.mongodb.net/<dbname>?retryWrites=true&w=majority");
 

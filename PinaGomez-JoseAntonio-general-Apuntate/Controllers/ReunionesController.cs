@@ -41,8 +41,9 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
             return CreatedAtRoute("GetReunion", new { id = reunion.Id.ToString() }, reunion);
         }
 
-        [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Reunion reunionIn)
+        
+        [HttpPost("{id:length(24)}/addParticipante")]
+        public IActionResult addParticipante(string id, Cita cita)
         {
             var reunion = _apuntateService.Get(id);
 
@@ -51,9 +52,35 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
                 return NotFound();
             }
 
-            _apuntateService.Update(id, reunionIn);
+            bool resultado = reunion.addCita(cita);
 
-            return NoContent();
+            if (resultado) {
+                _apuntateService.Update(id, reunion);
+                return NoContent();
+            } else {
+                return BadRequest("No se puede añadir esta cita.");
+            }
+
+        }
+
+        [HttpPost("{id:length(24)}/removeParticipante")]
+        public IActionResult removeParticipante(string id, string alumnoId)
+        {
+            var reunion = _apuntateService.Get(id);
+
+            if (reunion == null)
+            {
+                return NotFound();
+            }
+
+            bool resultado = reunion.removeCita(alumnoId);
+
+            if (resultado) {
+                _apuntateService.Update(id, reunion);
+                return NoContent();
+            } else {
+                return BadRequest("El participante no tiene cita.");
+            }
         }
 
         [HttpDelete("{id:length(24)}")]

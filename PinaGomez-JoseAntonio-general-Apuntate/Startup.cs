@@ -28,13 +28,6 @@ namespace PinaGomez_JoseAntonio_general_Apuntate
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // requires using Microsoft.Extensions.Options
-            services.Configure<ReunionDatabaseSettings>(
-                Configuration.GetSection(nameof(ReunionDatabaseSettings)));
-
-            services.AddSingleton<IReunionDatabaseSettings>(sp =>
-                sp.GetRequiredService<IOptions<ReunionDatabaseSettings>>().Value);
-
             services.AddSingleton<ApuntateService>();
 
             services.AddControllers();
