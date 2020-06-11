@@ -30,11 +30,7 @@ public class Query implements GraphQLRootResolver {
 	}
 
 	public List<Tarea> getAllTareasPendientes() {
-		List<Tarea> listaTareas = tareasRepository.getAllTareas();
-		
-		if (listaTareas == null) {
-			listaTareas = new LinkedList<Tarea>();
-		}
+		List<Tarea> listaTareas = new LinkedList<Tarea>();
 
 		List<String> listaEstudiantes = null;
 		try {
@@ -73,6 +69,11 @@ public class Query implements GraphQLRootResolver {
 			e.printStackTrace();
 		}
 		
+		List<Tarea> listaAux = tareasRepository.getAllTareas();
+		
+		for (Tarea tarea : listaAux) {
+			listaTareas.add(tarea);
+		}
 		return listaTareas;
 	}
 }
