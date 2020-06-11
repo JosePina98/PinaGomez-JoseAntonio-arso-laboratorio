@@ -20,9 +20,10 @@ public class TareasRepository {
 		this.tareas = tareas;
 	}
 
-	public Tarea saveTarea(String idCreador, String idTarea, String servicio) {
+	public Tarea saveTarea(String idCreador, String idEstudiante, String idTarea, String servicio) {
 		Document doc = new Document();
 		doc.append("idCreador", idCreador);
+		doc.append("idEstudiante", idEstudiante);
 		doc.append("idTarea", idTarea);
 		doc.append("servicio", servicio);
 		
@@ -31,8 +32,8 @@ public class TareasRepository {
 	}
 
 	private Tarea docToTarea(Document doc) {
-		return new Tarea(doc.get("_id").toString(), doc.getString("idCreador"), doc.getString("idTarea"),
-				doc.getString("servicio"));
+		return new Tarea(doc.get("_id").toString(), doc.getString("idCreador"), doc.getString("idEstudiante"), 
+				doc.getString("idTarea"), doc.getString("servicio"));
 	}
 
 	public List<Tarea> getAllTareas() {
@@ -42,37 +43,17 @@ public class TareasRepository {
 		}
 		return allTareas;
 	}
-	
-	public List<Tarea> getAllTareasSondeos() {
-		List<Tarea> allTareas = new ArrayList<Tarea>();
-		for (Document doc : tareas.find()) {
-			if (doc.getString("servicio").equalsIgnoreCase("sondeos")) {
-				allTareas.add(docToTarea(doc));				
-			}
-		}
-		return allTareas;
-	}
-	
-	public List<Tarea> getAllTareasApuntate() {
-		List<Tarea> allTareas = new ArrayList<Tarea>();
-		for (Document doc : tareas.find()) {
-			if (doc.getString("servicio").equalsIgnoreCase("apuntate")) {
-				allTareas.add(docToTarea(doc));				
-			}
-		}
-		return allTareas;
-	}
 
-	public boolean removeTarea(String idTarea) {
+	public boolean removeTarea(String idTarea, String idEstudiante) {
 		if (this.findByIdTarea(idTarea) != null) {
-			tareas.deleteOne(Filters.eq("idTarea", idTarea));
+			tareas.deleteOne(Filters.and(Filters.eq("idTarea", idTarea), Filters.eq("idEstudiante", idEstudiante)));
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Tarea findByIdTarea(String idTarea) {
+	private Tarea findByIdTarea(String idTarea) {
 		FindIterable<Document> listaDocs = tareas.find(Filters.eq("idTarea", idTarea));
 		
 		Document documento = listaDocs.first();

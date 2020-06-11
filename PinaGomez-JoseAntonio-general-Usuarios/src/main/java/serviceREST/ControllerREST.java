@@ -42,7 +42,7 @@ public class ControllerREST {
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "201 Created"),
 			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
 			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request") })
-	public Response createSondeo(@ApiParam(value = "Nombre del nuevo usuario", required = true) @FormParam("nombre") String nombre,
+	public Response createUsuario(@ApiParam(value = "Nombre del nuevo usuario", required = true) @FormParam("nombre") String nombre,
 			@ApiParam(value = "Correo electronico del nuevo usuario", required = true) @FormParam("correp") String correo, 
 			@ApiParam(value = "Rol del nuevo usuario", required = true) @FormParam("rol") String rol) throws ArgumentException, InternalException {
 		

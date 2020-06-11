@@ -54,8 +54,20 @@ public class Sender {
 
 	public static void notificarEventoNuevoSondeo(Sondeo sondeo) throws InternalException, IOException {
 		
-		String mensaje = "{ \"profesor\" : \"" + sondeo.getDocenteId() + "\", \"idTarea\" : \"" + sondeo.getId() +
+		String mensaje = "{ \"tipo\": \"new\", \"profesor\" : \"" + sondeo.getDocenteId() + "\", \"idTarea\" : \"" + sondeo.getId() +
 				"\", \"servicio\" : \"sondeos\" }";
+		
+		try {
+			enviar(mensaje);
+		} catch (Exception e) {
+			throw new InternalException("{ \"error\" : \"Error interno del sistema\" }");
+		}
+	}
+	
+	public static void notificarEventoSondeoRespondido(Sondeo sondeo, String idEstudiante) throws InternalException, IOException {
+		
+		String mensaje = "{ \"tipo\": \"remove\",  \"profesor\" : \"" + sondeo.getDocenteId() + "\", \"idTarea\" : \"" + sondeo.getId() +
+				"\", \"servicio\" : \"sondeos\", \"estudiante\" : \"" + idEstudiante + "\" }";
 		
 		try {
 			enviar(mensaje);

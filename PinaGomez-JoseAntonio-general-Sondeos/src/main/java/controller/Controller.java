@@ -226,6 +226,8 @@ public class Controller {
 
 		try {
 			this.controladorDAO.updateVotos(sondeo);
+			
+			Sender.notificarEventoSondeoRespondido(sondeo, alumnoId);
 		} catch (Exception e) {
 			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
 		}
