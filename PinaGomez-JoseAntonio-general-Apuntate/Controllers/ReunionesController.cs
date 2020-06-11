@@ -2,6 +2,8 @@ using PinaGomez_JoseAntonio_general_Apuntate.Modelo;
 using PinaGomez_JoseAntonio_general_Apuntate.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using PinaGomez_JoseAntonio_general_Apuntate.RabbitMQ;
+using System;
 
 namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
 {
@@ -44,6 +46,12 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
 
             _apuntateServicio.Create(reunion);
 
+            try {
+                Productor.notificarEventoNuevaReunion(reunion);
+            } catch (Exception) {
+                return StatusCode(500);
+            }
+
             return CreatedAtRoute("GetReunion", new { id = reunion.Id.ToString() }, reunion);
         }
 
@@ -68,7 +76,13 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
 
             if (resultado) {
                 _apuntateServicio.Update(id, reunion);
-                return NoContent();
+
+                try {
+                    Productor.notificarEventoInscripcion(reunion, cita.alumnoId);
+                    return NoContent();
+                } catch (Exception) {
+                    return StatusCode(500);
+                }
             } else {
                 return BadRequest("No se puede añadir esta cita.");
             }

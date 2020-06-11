@@ -56,3 +56,4 @@ C:\Users\jose_\Desktop\vs_Arso\PinaGomez-JoseAntonio-arso-laboratorio\PinaGomez-
 C:\Users\jose_\Desktop\vs_Arso\PinaGomez-JoseAntonio-arso-laboratorio\PinaGomez-JoseAntonio-general-Apuntate\obj\Debug\netcoreapp3.1\PinaGomez-JoseAntonio-general-Apuntate.dll
 C:\Users\jose_\Desktop\vs_Arso\PinaGomez-JoseAntonio-arso-laboratorio\PinaGomez-JoseAntonio-general-Apuntate\obj\Debug\netcoreapp3.1\PinaGomez-JoseAntonio-general-Apuntate.pdb
 C:\Users\jose_\Desktop\vs_Arso\PinaGomez-JoseAntonio-arso-laboratorio\PinaGomez-JoseAntonio-general-Apuntate\obj\Debug\netcoreapp3.1\PinaGomez-JoseAntonio-general-Apuntate.genruntimeconfig.cache
+C:\Users\jose_\Desktop\vs_Arso\PinaGomez-JoseAntonio-arso-laboratorio\PinaGomez-JoseAntonio-general-Apuntate\bin\Debug\netcoreapp3.1\RabbitMQ.Client.dll
