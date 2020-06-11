@@ -11,9 +11,9 @@ public class Mutation implements GraphQLRootResolver {
 		this.tareasRepository = tareasRepository;
 	}
 
-	public boolean removeTarea(String idTarea) {
+	public boolean removeTarea(String idTarea, String idEstudiante) {
 		
-		return tareasRepository.removeTarea(idTarea);
+		return tareasRepository.removeTarea(idTarea, idEstudiante);
 	}
 
 }

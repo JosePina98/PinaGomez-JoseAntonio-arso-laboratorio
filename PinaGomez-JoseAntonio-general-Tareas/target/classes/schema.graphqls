@@ -1,5 +1,6 @@
 type Tarea {
   idCreador: String!
+  idEstudiante: String!
   idTarea: String!
   servicio: String!
 }
@@ -9,7 +10,7 @@ type Query {
 }
 
 type Mutation {
-	removeTarea(idTarea: String!): Boolean
+  removeTarea(idTarea: String!, idEstudiante: String!): Boolean
 }
 
 schema {
