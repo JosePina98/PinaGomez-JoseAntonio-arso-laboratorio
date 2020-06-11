@@ -35,11 +35,53 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
             return reunion;
         }
 
+        private string comprobarErrores(Reunion reunion) {
+            if (reunion.titulo == null || reunion.titulo.Equals("")) {
+                return "El parámetro titulo no puede ser vacio";
+            }
+            if (reunion.docenteId == null || reunion.docenteId.Equals("")) {
+                return "El parámetro docenteId no puede ser vacio";
+            }
+            if (reunion.ubicacion == null || reunion.ubicacion.Equals("")) {
+                return "El parámetro ubicacion no puede ser vacio";
+            }
+            if (reunion.frecuencia == null || reunion.frecuencia.Equals("")) {
+                return "El parámetro frecuencia no puede ser vacio";
+            }
+            if (reunion.fechaFin <= reunion.fechaInicio) {
+                return "La fecha de fin de la reunion no puede ser anterior a la de inicio";
+            }
+            long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            if (reunion.fechaInicio < now) {
+                return "La fecha de inicio de la reunion no puede ser anterior a la fecha actual";
+            }
+            if (reunion.aperturaInscripcion < 0) { 
+                return "El parámetro aperturaInscripcion no puede ser menor de 0";
+            }
+            if (reunion.cierreInscripcion <= 0) {
+                return "El parámetro cierreInscripcion no puede ser menor o igual que 0";
+            }
+            if (reunion.cierreInscripcion < reunion.aperturaInscripcion) {
+                return "El parámetro cierreInscripcion no puede ser menor que el parámetro aperturaInscripcion";
+            }
+            if (reunion.numPlazas <= 0) {
+                return "El parámetro numPlazas no puede ser menor o igual que 0";
+            }
+            if (reunion.participantesPorIntervalo <= 0) {
+                return "El parámetro numPlazas no puede ser menor o igual que 0";
+            }
+            return "";
+        }
+
         [HttpPost]
         public ActionResult<Reunion> Create(Reunion reunion)
         {
+            string mensaje = comprobarErrores(reunion);
+            if (!mensaje.Equals("")) {
+                return BadRequest(mensaje);
+            }
+            
             bool resultado = UsuariosServicio.existeDocente(reunion.docenteId);
-
             if (!resultado) {
                 return BadRequest("El id del docente no es correcto.");
             }
@@ -72,7 +114,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
                 return NotFound();
             }
 
-            resultado = reunion.addCita(cita);
+            resultado = reunion.addInscripcion(cita);
 
             if (resultado) {
                 _apuntateServicio.Update(id, reunion);
@@ -105,7 +147,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
                 return NotFound();
             }
 
-            resultado = reunion.removeCita(alumnoId);
+            resultado = reunion.removeInscripcion(alumnoId);
 
             if (resultado) {
                 _apuntateServicio.Update(id, reunion);
