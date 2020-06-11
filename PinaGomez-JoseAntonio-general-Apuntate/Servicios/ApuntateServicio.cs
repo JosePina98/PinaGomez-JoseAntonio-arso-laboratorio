@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace PinaGomez_JoseAntonio_general_Apuntate.Servicios
 {
-    public class ApuntateService
+    public class ApuntateServicio
     {
         private readonly IMongoCollection<Reunion> _reuniones;
 
-        public ApuntateService()
+        public ApuntateServicio()
         {
             var client = new MongoClient("mongodb+srv://arso:arso-20@cluster0-xditi.azure.mongodb.net/<dbname>?retryWrites=true&w=majority");
 

@@ -9,21 +9,21 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
     [ApiController]
     public class ReunionesController : ControllerBase
     {
-        private readonly ApuntateService _apuntateService;
+        private readonly ApuntateServicio _apuntateServicio;
 
-        public ReunionesController(ApuntateService apuntateService)
+        public ReunionesController(ApuntateServicio apuntateServicio)
         {
-            _apuntateService = apuntateService;
+            _apuntateServicio = apuntateServicio;
         }
 
         [HttpGet]
         public ActionResult<List<Reunion>> Get() =>
-            _apuntateService.Get();
+            _apuntateServicio.Get();
 
         [HttpGet("{id:length(24)}", Name = "GetReunion")]
         public ActionResult<Reunion> Get(string id)
         {
-            var reunion = _apuntateService.Get(id);
+            var reunion = _apuntateServicio.Get(id);
 
             if (reunion == null)
             {
@@ -36,26 +36,38 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
         [HttpPost]
         public ActionResult<Reunion> Create(Reunion reunion)
         {
-            _apuntateService.Create(reunion);
+            bool resultado = UsuariosServicio.existeDocente(reunion.docenteId);
+
+            if (!resultado) {
+                return BadRequest("El id del docente no es correcto.");
+            }
+
+            _apuntateServicio.Create(reunion);
 
             return CreatedAtRoute("GetReunion", new { id = reunion.Id.ToString() }, reunion);
         }
 
         
         [HttpPost("{id:length(24)}/addParticipante")]
-        public IActionResult addParticipante(string id, Cita cita)
+        public IActionResult addParticipante(string id, Inscripcion cita)
         {
-            var reunion = _apuntateService.Get(id);
+            bool resultado = UsuariosServicio.existeEstudiante(cita.alumnoId);
+
+            if (!resultado) {
+                return BadRequest("El id del estudiante no es correcto.");
+            }
+
+            var reunion = _apuntateServicio.Get(id);
 
             if (reunion == null)
             {
                 return NotFound();
             }
 
-            bool resultado = reunion.addCita(cita);
+            resultado = reunion.addCita(cita);
 
             if (resultado) {
-                _apuntateService.Update(id, reunion);
+                _apuntateServicio.Update(id, reunion);
                 return NoContent();
             } else {
                 return BadRequest("No se puede añadir esta cita.");
@@ -63,20 +75,26 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
 
         }
 
-        [HttpPost("{id:length(24)}/removeParticipante")]
+        [HttpPost("{id:length(24)}/removeParticipante/{alumnoId}")]
         public IActionResult removeParticipante(string id, string alumnoId)
         {
-            var reunion = _apuntateService.Get(id);
+            bool resultado = UsuariosServicio.existeEstudiante(alumnoId);
+
+            if (!resultado) {
+                return BadRequest("El id del estudiante no es correcto.");
+            }
+
+            var reunion = _apuntateServicio.Get(id);
 
             if (reunion == null)
             {
                 return NotFound();
             }
 
-            bool resultado = reunion.removeCita(alumnoId);
+            resultado = reunion.removeCita(alumnoId);
 
             if (resultado) {
-                _apuntateService.Update(id, reunion);
+                _apuntateServicio.Update(id, reunion);
                 return NoContent();
             } else {
                 return BadRequest("El participante no tiene cita.");
@@ -86,14 +104,14 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
         [HttpDelete("{id:length(24)}")]
         public IActionResult Delete(string id)
         {
-            var reunion = _apuntateService.Get(id);
+            var reunion = _apuntateServicio.Get(id);
 
             if (reunion == null)
             {
                 return NotFound();
             }
 
-            _apuntateService.Remove(reunion.Id);
+            _apuntateServicio.Remove(reunion.Id);
 
             return NoContent();
         }

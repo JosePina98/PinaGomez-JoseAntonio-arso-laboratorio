@@ -20,8 +20,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
         public int cierreInscripcion { get; set; }
         public int numPlazas { get; set; }
         public int participantesPorIntervalo { get; set; }
-        public bool mostrarNombres { get; set; }
-        public List<Cita> listaCitas { get; set; }
+        public List<Inscripcion> listaInscripciones { get; set; }
 
         public int getTiempoPorParticipante() {
             long diferencia = fechaFin - fechaInicio;
@@ -46,7 +45,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
             }
 
             int yaReservados = 0;
-            foreach (Cita cita in listaCitas) {
+            foreach (Inscripcion cita in listaInscripciones) {
                 if (cita.intervalo == intervalo) {
                     yaReservados++;
                 }
@@ -60,7 +59,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
         }
 
         private bool yaReservado(String alumnoId) {
-            foreach (Cita cita in listaCitas) {
+            foreach (Inscripcion cita in listaInscripciones) {
                 if (cita.alumnoId == alumnoId) {
                     return true;
                 }
@@ -69,31 +68,31 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
             return false;
         }
 
-        public bool addCita(Cita cita) {
-            if (this.listaCitas == null) {
-                this.listaCitas = new List<Cita>();
+        public bool addCita(Inscripcion cita) {
+            if (this.listaInscripciones == null) {
+                this.listaInscripciones = new List<Inscripcion>();
             }
 
             if (!turnoLibre(cita.intervalo) || yaReservado(cita.alumnoId)) {
                 return false;
             }
 
-            if (this.listaCitas.Contains(cita)) {
+            if (this.listaInscripciones.Contains(cita)) {
                 return false;
             } else {
-                this.listaCitas.Add(cita);
+                this.listaInscripciones.Add(cita);
                 return true;
             }
         }
 
         public bool removeCita(String alumonoId) {
-            if (this.listaCitas == null) {
-                this.listaCitas = new List<Cita>();
+            if (this.listaInscripciones == null) {
+                this.listaInscripciones = new List<Inscripcion>();
             }
 
-            for (int i = 0; i < listaCitas.Count; i++) {
-                if (listaCitas[i].alumnoId == alumonoId) {
-                    listaCitas.RemoveAt(i);
+            for (int i = 0; i < listaInscripciones.Count; i++) {
+                if (listaInscripciones[i].alumnoId == alumonoId) {
+                    listaInscripciones.RemoveAt(i);
                     return true;
                 }
             }
