@@ -31,8 +31,8 @@ public class Controller {
 		}
 		
 		//Controlar que el numero minimo de respuestas sea mayor que 0
-		if (minimoRespuestas < 0) {
-			throw new ArgumentException("{ \"error\" : \"El parametro minimoRespuestas no puede ser menor que 0\" }");
+		if (minimoRespuestas <= 0) {
+			throw new ArgumentException("{ \"error\" : \"El parametro minimoRespuestas no puede ser menor o igual que 0\" }");
 		}
 		
 		//Controlar que el numero maximo de respuestas sea igual o mayor que el minimo
@@ -122,6 +122,10 @@ public class Controller {
 		return sondeo;
 	}
 
+	public List<Sondeo> getSondeos() {
+		return this.controladorDAO.getSondeos();
+	}
+
 	public void addOpcionSondeo(String id, String idDocente, String opcion) throws ArgumentException, NotFoundException, InternalException {
 
 		//Comprobar que el id del sondeo tiene datos validos y existe
@@ -131,14 +135,14 @@ public class Controller {
 		
 		Sondeo sondeo = this.getSondeo(id);
 		
-		//Comprobar que la opcion a añadir tiene datos validos y no esta ya añadida
+		//Comprobar que la opcion a aï¿½adir tiene datos validos y no esta ya aï¿½adida
 		for (String s : sondeo.getPregunta().getOpciones()) {
 			if (s.equalsIgnoreCase(opcion)) {
 				throw new ArgumentException("{ \"error\" : \"La opcion que intenta anadir ya esta anadida\" }");
 			}
 		}
 		
-		//Comprobar que el que esta haciendo esta peticion es el docente que creó el sondeo
+		//Comprobar que el que esta haciendo esta peticion es el docente que creï¿½ el sondeo
 		if (!idDocente.equals(sondeo.getDocenteId())) {
 			throw new ArgumentException("{ \"error\" : \"Solo el docente que creo el sondeo puede anadirle opciones\" }");
 		}
@@ -156,17 +160,23 @@ public class Controller {
 		
 		Sondeo sondeo = this.getSondeo(id);
 		
-		//Comprobar que el que esta haciendo esta peticion es el docente que creó el sondeo
+		//Comprobar que el que esta haciendo esta peticion es el docente que creï¿½ el sondeo
 		if (!idDocente.equals(sondeo.getDocenteId())) {
 			throw new ArgumentException("{ \"error\" : \"Solo el docente que creo el sondeo puede anadirle opciones\" }");
 		}
-				
-		sondeo.deleteOpcion(index);
+			
+		
+		boolean existe = false;
 		
 		try {
+			existe = sondeo.deleteOpcion(index);
 			this.controladorDAO.updateOpciones(sondeo);
 		} catch (Exception e) {
 			throw new InternalException("{ \"error\" : \"Error en la base de datos\" }");
+		}
+
+		if (!existe) {
+			throw new NotFoundException("{ \"error\" : \"El idnice indicado no existe\" }");
 		}
 	}
 

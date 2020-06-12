@@ -26,10 +26,13 @@ public class Pregunta {
 		this.resultados.add(0);
 	}
 	
-	public void deleteOpcion(int index) {
+	public boolean deleteOpcion(int index) {
 		if (index >= 0 && index < this.opciones.size()) {
 			this.opciones.remove(index);
 			this.resultados.remove(index);
+			return true;
+		} else {
+			return false;
 		}
 	}
 	

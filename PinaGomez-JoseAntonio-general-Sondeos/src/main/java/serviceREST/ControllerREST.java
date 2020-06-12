@@ -66,6 +66,21 @@ public class ControllerREST {
 	}
 
 	@GET
+	@Path("")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Consulta de todos los sondeos", notes = "Devuelve los datos de todos los sondeos en formato JSON")
+	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
+			@ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "500 Internal Server Error"),
+			@ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "400 Bad Request"),
+			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
+	public Response getSondeos() throws ArgumentException, NotFoundException, InternalException {
+				
+		List<Sondeo> listaSondeos = controlador.getSondeos();
+		
+		return Response.status(Response.Status.OK).entity(listaSondeos).build();
+	}
+
+	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Consulta del sondeo especificado en el id", notes = "Devuelve los datos del sondeo en formato JSON", response = Sondeo.class)
@@ -105,10 +120,9 @@ public class ControllerREST {
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response deleteOpcion(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Id del docente que hace la peticion", required = true) @FormParam("docenteId") String docenteId,
-			@ApiParam(value = "Indice de la opcion a borrar del sondeo", required = true) @FormParam("index") int index) throws ArgumentException, NotFoundException, InternalException {
+			@ApiParam(value = "Indice de la opcion a borrar del sondeo (Empieza en 1)", required = true) @FormParam("index") int index) throws ArgumentException, NotFoundException, InternalException {
 		
-		
-		controlador.deleteOpcionSondeo(id, docenteId, index);
+		controlador.deleteOpcionSondeo(id, docenteId, index - 1);
 		
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
@@ -122,16 +136,23 @@ public class ControllerREST {
 			@ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "404 Not Found") })
 	public Response responderSondeo(@ApiParam(value = "Id del sondeo", required = true) @PathParam("id") String id, 
 			@ApiParam(value = "Id del alumno que responde el sondeo", required = true) @FormParam("alumnoId") String alumnoId,
-			@ApiParam(value = "Respuestas del sondeo", required = true) @QueryParam("respuestas") List<String> respuestas) throws ArgumentException, NotFoundException, InternalException {
+			@ApiParam(value = "Indices de las opciones marcadas como respuestas (Empiezan en 1)", required = true) @QueryParam("respuestas") List<String> respuestas) throws ArgumentException, NotFoundException, InternalException {
 		
-
 		List<Integer> lista = new LinkedList<Integer>();
 
 		String string = respuestas.get(0);
+
+		if (string == null || string.equals("")) {
+			throw new ArgumentException("{ \"error\" : \"Las respuestas son no pueden estar vacías\" }");
+		}
+
 		String[] array = string.split(",");
 		for (String i : array) {
+			if (i == null || i.equals("")) {
+				throw new ArgumentException("{ \"error\" : \"Las respuestas no pueden estar vacías\" }");
+			}
 			int aux = Integer.valueOf(i);
-			lista.add(aux);
+			lista.add(aux - 1);
 		}
 		
 		controlador.votar(id, alumnoId, lista);		

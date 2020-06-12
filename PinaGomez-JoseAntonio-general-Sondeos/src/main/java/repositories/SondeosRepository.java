@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 
 import schema.Pregunta;
@@ -78,6 +79,22 @@ public class SondeosRepository {
 		} else {
 			return null;
 		}
+	}
+
+	public List<Sondeo> getAll() {
+		FindIterable<Document> doc = sondeos.find();
+		LinkedList<Sondeo> sondeosList = new LinkedList<Sondeo>();
+		
+		MongoCursor<Document> cursor = doc.iterator();
+		try {
+			while (cursor.hasNext()) {
+				sondeosList.add(docToSondeo(cursor.next()));
+			}
+		} finally {
+			cursor.close();
+		}
+
+		return sondeosList;
 	}
 	
 	public void updateOpciones(Sondeo sondeo) {

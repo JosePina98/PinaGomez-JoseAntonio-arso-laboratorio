@@ -1,6 +1,7 @@
 package dao;
 
 import java.util.Date;
+import java.util.List;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -46,6 +47,11 @@ public class DAOController {
 	public Sondeo getSondeo(String id) {
 
 		return sondeoRepository.findById(id);
+	}
+
+	public List<Sondeo> getSondeos() {
+
+		return sondeoRepository.getAll();
 	}
 
 	public void updateOpciones(Sondeo sondeo) {

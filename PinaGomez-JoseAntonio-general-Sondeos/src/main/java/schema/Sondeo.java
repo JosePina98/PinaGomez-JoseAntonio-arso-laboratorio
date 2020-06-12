@@ -28,8 +28,8 @@ public class Sondeo {
 		this.pregunta.addOpcion(opcion);
 	}
 	
-	public void deleteOpcion(int index) {
-		this.pregunta.deleteOpcion(index);
+	public boolean deleteOpcion(int index) {
+		return this.pregunta.deleteOpcion(index);
 	}
 	
 	public void setVotos(int index, int votos) {

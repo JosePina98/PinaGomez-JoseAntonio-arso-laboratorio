@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "b1y2cuozUj2Q7AqS2o1YJ6hy3X4JYquCMispj3cVDK8v1FPYnu2Vkkxx1hjBm5S8pR0lJUxBzdkU9DXEP/jwjQ==",
+  "dgSpecHash": "qRIhCNjcISJYKZABX/b/LMiK26knDZmFCpHeBY4PsH4THa+uJzUM4ascMke8mgBWbvGRYSrHhVBd7ENmkLTDww==",
   "success": true,
-  "projectFilePath": "C:\\Users\\jose_\\Desktop\\vs_Arso\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\PinaGomez-JoseAntonio-general-Apuntate.csproj",
+  "projectFilePath": "C:\\Users\\jose_\\git\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\PinaGomez-JoseAntonio-general-Apuntate.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jose_\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\jose_\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\3.1.5\\microsoft.aspnetcore.jsonpatch.3.1.5.nupkg.sha512",

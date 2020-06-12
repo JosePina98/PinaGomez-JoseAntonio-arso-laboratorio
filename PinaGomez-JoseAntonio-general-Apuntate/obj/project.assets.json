@@ -6476,11 +6476,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jose_\\Desktop\\vs_Arso\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\PinaGomez-JoseAntonio-general-Apuntate.csproj",
+      "projectUniqueName": "C:\\Users\\jose_\\git\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\PinaGomez-JoseAntonio-general-Apuntate.csproj",
       "projectName": "PinaGomez-JoseAntonio-general-Apuntate",
-      "projectPath": "C:\\Users\\jose_\\Desktop\\vs_Arso\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\PinaGomez-JoseAntonio-general-Apuntate.csproj",
+      "projectPath": "C:\\Users\\jose_\\git\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\PinaGomez-JoseAntonio-general-Apuntate.csproj",
       "packagesPath": "C:\\Users\\jose_\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jose_\\Desktop\\vs_Arso\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\obj\\",
+      "outputPath": "C:\\Users\\jose_\\git\\PinaGomez-JoseAntonio-arso-laboratorio\\PinaGomez-JoseAntonio-general-Apuntate\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\jose_\\AppData\\Roaming\\NuGet\\NuGet.Config",
