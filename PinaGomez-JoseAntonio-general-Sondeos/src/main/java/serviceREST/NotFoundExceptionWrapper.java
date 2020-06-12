@@ -2,9 +2,11 @@ package serviceREST;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 import exceptions.NotFoundException;
 
+@Provider
 public class NotFoundExceptionWrapper implements ExceptionMapper<NotFoundException> {
 
 	public Response toResponse(NotFoundException exception) {

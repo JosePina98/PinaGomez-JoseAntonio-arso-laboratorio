@@ -61,8 +61,8 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
             if (reunion.cierreInscripcion <= 0) {
                 return "El parámetro cierreInscripcion no puede ser menor o igual que 0";
             }
-            if (reunion.cierreInscripcion < reunion.aperturaInscripcion) {
-                return "El parámetro cierreInscripcion no puede ser menor que el parámetro aperturaInscripcion";
+            if (reunion.aperturaInscripcion < reunion.cierreInscripcion) {
+                return "El parámetro aperturaInscripcion no puede ser menor que el parámetro cierreInscripcion";
             }
             if (reunion.numPlazas <= 0) {
                 return "El parámetro numPlazas no puede ser menor o igual que 0";
@@ -131,10 +131,10 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
 
         }
 
-        [HttpPost("{id:length(24)}/removeParticipante/{alumnoId}")]
-        public IActionResult removeParticipante(string id, string alumnoId)
+        [HttpPost("{id:length(24)}/removeParticipante/{correoAlumno}")]
+        public IActionResult removeParticipante(string id, string correoAlumno)
         {
-            bool resultado = UsuariosServicio.existeEstudiante(alumnoId);
+            bool resultado = UsuariosServicio.existeEstudiante(correoAlumno);
 
             if (!resultado) {
                 return BadRequest("El id del estudiante no es correcto.");
@@ -147,7 +147,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Controllers
                 return NotFound();
             }
 
-            resultado = reunion.removeInscripcion(alumnoId);
+            resultado = reunion.removeInscripcion(correoAlumno);
 
             if (resultado) {
                 _apuntateServicio.Update(id, reunion);

@@ -45,7 +45,7 @@ public class TareasRepository {
 	}
 
 	public boolean removeTarea(String idTarea, String idEstudiante) {
-		if (this.findByIdTarea(idTarea) != null) {
+		if (this.findByIdTareaIdEstudiante(idTarea, idEstudiante) != null) {
 			tareas.deleteOne(Filters.and(Filters.eq("idTarea", idTarea), Filters.eq("idEstudiante", idEstudiante)));
 			return true;
 		} else {
@@ -53,8 +53,8 @@ public class TareasRepository {
 		}
 	}
 
-	private Tarea findByIdTarea(String idTarea) {
-		FindIterable<Document> listaDocs = tareas.find(Filters.eq("idTarea", idTarea));
+	private Tarea findByIdTareaIdEstudiante(String idTarea, String idEstudiante) {
+		FindIterable<Document> listaDocs = tareas.find(Filters.and(Filters.eq("idTarea", idTarea), Filters.eq("idEstudiante", idEstudiante)));
 		
 		Document documento = listaDocs.first();
 		

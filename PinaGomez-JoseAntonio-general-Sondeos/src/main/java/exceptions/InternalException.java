@@ -1,9 +1,6 @@
 package exceptions;
 
-import javax.xml.ws.WebFault;
-
 @SuppressWarnings("serial")
-@WebFault
 public class InternalException extends Exception {
 	
 	protected String info;
@@ -18,7 +15,7 @@ public class InternalException extends Exception {
 		info = msg;
 	}
 	
-	public String  getFaultInfo() {
+	public String getFaultInfo() {
 		return info;
 	}
 }

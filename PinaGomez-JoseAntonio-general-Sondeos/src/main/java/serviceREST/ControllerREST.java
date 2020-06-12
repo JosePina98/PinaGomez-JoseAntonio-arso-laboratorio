@@ -66,7 +66,7 @@ public class ControllerREST {
 	}
 
 	@GET
-	@Path("")
+	@Path("/todos")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Consulta de todos los sondeos", notes = "Devuelve los datos de todos los sondeos en formato JSON")
 	@ApiResponses(value = { @ApiResponse(code = HttpServletResponse.SC_OK, message = "200 OK"),
@@ -143,7 +143,7 @@ public class ControllerREST {
 		String string = respuestas.get(0);
 
 		if (string == null || string.equals("")) {
-			throw new ArgumentException("{ \"error\" : \"Las respuestas son no pueden estar vacías\" }");
+			throw new ArgumentException("{ \"error\" : \"Las respuestas no pueden estar vacías\" }");
 		}
 
 		String[] array = string.split(",");

@@ -89,13 +89,13 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
             }
         }
 
-        public bool removeInscripcion(String alumonoId) {
+        public bool removeInscripcion(String alumnoId) {
             if (this.listaInscripciones == null) {
                 this.listaInscripciones = new List<Inscripcion>();
             }
 
-            for (int i = 0; i < listaInscripciones.Count; i++) {
-                if (listaInscripciones[i].alumnoId == alumonoId) {
+            for (int i = listaInscripciones.Count - 1; i >= 0; i--) {
+                if (listaInscripciones[i].alumnoId.Equals(alumnoId)) {
                     listaInscripciones.RemoveAt(i);
                     return true;
                 }

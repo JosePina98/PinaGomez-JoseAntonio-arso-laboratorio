@@ -79,6 +79,10 @@ public class Controller {
 		if (fechaApertura.before(new Date())) {
 			throw new ArgumentException("{ \"error\" : \"El parametro fechaApertura no puede ser anterior a la fecha actual\" }");
 		}
+
+		if (fechaApertura.equals(fechaCierre)) {
+			throw new ArgumentException("{ \"error\" : \"El parametro fechaApertura no puede ser igual al parametro fechaCierre\" }");
+		}
 		
 		//Controlar que la fecha de cierre sea despues de la de apertura
 		if (fechaCierre.before(fechaApertura)) {
@@ -162,7 +166,7 @@ public class Controller {
 		
 		//Comprobar que el que esta haciendo esta peticion es el docente que cre� el sondeo
 		if (!idDocente.equals(sondeo.getDocenteId())) {
-			throw new ArgumentException("{ \"error\" : \"Solo el docente que creo el sondeo puede anadirle opciones\" }");
+			throw new ArgumentException("{ \"error\" : \"Solo el docente que creo el sondeo puede borrarle opciones\" }");
 		}
 			
 		
@@ -176,7 +180,7 @@ public class Controller {
 		}
 
 		if (!existe) {
-			throw new NotFoundException("{ \"error\" : \"El idnice indicado no existe\" }");
+			throw new NotFoundException("{ \"error\" : \"El indice indicado no existe\" }");
 		}
 	}
 
@@ -216,7 +220,7 @@ public class Controller {
 		
 		//Comprobar que todas las opciones respondidas estan en el sondeo
 		for (int indice : respuestas) {
-			if (indice >= sondeo.getPregunta().getOpciones().size()) {
+			if (indice < 0 || indice >= sondeo.getPregunta().getOpciones().size()) {
 				throw new ArgumentException("{ \"error\" : \"No se puede responder una opcion que no esta en el Sondeo\" }");
 			}
 			sondeo.addVoto(indice);

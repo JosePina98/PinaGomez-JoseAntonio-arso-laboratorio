@@ -1,9 +1,6 @@
 package exceptions;
 
-import javax.xml.ws.WebFault;
-
 @SuppressWarnings("serial")
-@WebFault
 public class ArgumentException extends Exception {
 	
 	protected String info;
