@@ -68,12 +68,16 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
             return false;
         }
 
-        public bool addCita(Inscripcion cita) {
+        private bool quedanPlazas() {
+            return (this.listaInscripciones.Count < this.numPlazas);
+        }
+
+        public bool addInscripcion(Inscripcion cita) {
             if (this.listaInscripciones == null) {
                 this.listaInscripciones = new List<Inscripcion>();
             }
 
-            if (!turnoLibre(cita.intervalo) || yaReservado(cita.alumnoId)) {
+            if (!quedanPlazas() || !turnoLibre(cita.intervalo) || yaReservado(cita.alumnoId)) {
                 return false;
             }
 
@@ -85,7 +89,7 @@ namespace PinaGomez_JoseAntonio_general_Apuntate.Modelo
             }
         }
 
-        public bool removeCita(String alumonoId) {
+        public bool removeInscripcion(String alumonoId) {
             if (this.listaInscripciones == null) {
                 this.listaInscripciones = new List<Inscripcion>();
             }
